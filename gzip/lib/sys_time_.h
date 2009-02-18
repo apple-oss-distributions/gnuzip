@@ -1,5 +1,6 @@
-/* exit() function.
-   Copyright (C) 1995, 2001 Free Software Foundation, Inc.
+/* Provide a more complete sys/time.h.
+
+   Copyright (C) 2007 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,18 +16,29 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifndef _EXIT_H
-#define _EXIT_H
+/* Written by Paul Eggert.  */
 
-/* Get exit() declaration.  */
-#include <stdlib.h>
+#ifndef _GL_SYS_TIME_H
+#define _GL_SYS_TIME_H
 
-/* Some systems do not define EXIT_*, despite otherwise supporting C89.  */
-#ifndef EXIT_SUCCESS
-# define EXIT_SUCCESS 0
-#endif
-#ifndef EXIT_FAILURE
-# define EXIT_FAILURE 1
+#if @HAVE_SYS_TIME_H@
+# include @ABSOLUTE_SYS_TIME_H@
+#else
+# include <time.h>
 #endif
 
-#endif /* _EXIT_H */
+#if ! @HAVE_STRUCT_TIMEVAL@
+struct timeval
+{
+  time_t tv_sec;
+  long int tv_usec;
+};
+#endif
+
+#if @REPLACE_GETTIMEOFDAY@
+# undef gettimeofday
+# define gettimeofday rpl_gettimeofday
+int gettimeofday (struct timeval *restrict, void *restrict);
+#endif
+
+#endif /* _GL_SYS_TIME_H */
